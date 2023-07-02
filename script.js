@@ -126,7 +126,8 @@ const updateUI = function (currentAccount) {
 };
 
 // Callback Functions
-// Login
+
+// Login Feature
 let currentAccount;
 btnLogin.addEventListener('click', e => {
   e.preventDefault();
@@ -149,7 +150,7 @@ btnLogin.addEventListener('click', e => {
   }
 });
 
-// Transfer Money
+// Money Transfer Feature
 btnTransfer.addEventListener('click', e => {
   e.preventDefault();
   const transferUsername = inputTransferTo.value;
@@ -170,7 +171,7 @@ btnTransfer.addEventListener('click', e => {
   }
 });
 
-// Loan Request
+// Loan Request Feature
 btnLoan.addEventListener('click', e => {
   e.preventDefault();
   const loanAmount = Number(inputLoanAmount.value);
@@ -185,9 +186,26 @@ btnLoan.addEventListener('click', e => {
   }
 });
 
-// Account Closure
+// Account Closure Feature
 btnClose.addEventListener('click', e => {
   e.preventDefault();
   const inputUsername = inputCloseUsername.value;
-  const inputPin = inputClosePin.value;
+  const inputPin = Number(inputClosePin.value);
+  inputCloseUsername.value = inputClosePin.value = '';
+  inputClosePin.blur();
+  if (
+    inputUsername &&
+    inputPin &&
+    inputUsername === currentAccount.username &&
+    inputPin === currentAccount.pin
+  ) {
+    accounts.splice(
+      accounts.findIndex(
+        ({ username }) => username === currentAccount.username
+      ),
+      1
+    );
+    containerApp.style.opacity = 0;
+    labelWelcome.textContent = 'Log in to get started';
+  }
 });
