@@ -100,7 +100,7 @@ const displaySummary = function ({ movements, interestRate }) {
 
   labelSumIn.textContent = `${totalDeposit}€`;
   labelSumOut.textContent = `${Math.abs(totalWithdrew)}€`;
-  labelSumInterest.textContent = `${totalInterest}€`;
+  labelSumInterest.textContent = `${String(totalInterest).slice(0, 5)}€`;
 };
 
 // Display Movements
@@ -171,4 +171,23 @@ btnTransfer.addEventListener('click', e => {
 });
 
 // Loan Request
+btnLoan.addEventListener('click', e => {
+  e.preventDefault();
+  const loanAmount = Number(inputLoanAmount.value);
+  inputLoanAmount.value = '';
+  inputLoanAmount.blur();
+  if (
+    loanAmount > 0 &&
+    currentAccount.movements.some(movement => movement > 0.1 * loanAmount)
+  ) {
+    currentAccount.movements.push(loanAmount);
+    updateUI(currentAccount);
+  }
+});
+
 // Account Closure
+btnClose.addEventListener('click', e => {
+  e.preventDefault();
+  const inputUsername = inputCloseUsername.value;
+  const inputPin = inputClosePin.value;
+});
