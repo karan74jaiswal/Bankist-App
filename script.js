@@ -75,8 +75,9 @@ accounts.forEach(
 // Functionalities
 
 // Calculate and Display Balance
+let currentAccountBalance;
 const displayBalance = function ({ movements }) {
-  const currentAccountBalance = movements.reduce(
+  currentAccountBalance = movements.reduce(
     (balance, movement) => balance + movement,
     0
   );
@@ -147,3 +148,27 @@ btnLogin.addEventListener('click', e => {
     labelWelcome.textContent = 'Wrong Credentials, Try Again';
   }
 });
+
+// Transfer Money
+btnTransfer.addEventListener('click', e => {
+  e.preventDefault();
+  const transferUsername = inputTransferTo.value;
+  const transferAmount = Number(inputTransferAmount.value);
+  inputTransferTo.value = inputTransferAmount.value = '';
+  inputTransferAmount.blur();
+  const transferAccount = accounts.find(
+    ({ username }) => transferUsername === username
+  );
+  if (
+    transferAccount &&
+    transferAmount <= currentAccountBalance &&
+    transferAmount > 0
+  ) {
+    currentAccount.movements.push(-transferAmount);
+    transferAccount.movements.push(transferAmount);
+    updateUI(currentAccount);
+  }
+});
+
+// Loan Request
+// Account Closure
