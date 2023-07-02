@@ -72,6 +72,59 @@ accounts.forEach(
       .join(''))
 );
 
+// Functionalities
+
+// Calculate and Display Balance
+const displayBalance = function ({ movements }) {
+  const currentAccountBalance = movements.reduce(
+    (balance, movement) => balance + movement,
+    0
+  );
+  labelBalance.textContent = `${currentAccountBalance}€`;
+};
+
+// Calculate and Display Summary
+const displaySummary = function ({ movements, interestRate }) {
+  const totalDeposit = movements
+    .filter(movement => movement > 0)
+    .reduce((sum, deposit) => sum + deposit, 0);
+
+  const totalWithdrew = movements
+    .filter(movement => movement < 0)
+    .reduce((sum, withdrawal) => sum + withdrawal, 0);
+
+  const totalInterest = movements
+    .filter(movement => movement > 0)
+    .reduce((sum, deposit) => sum + interestRate * 0.01 * deposit, 0);
+
+  labelSumIn.textContent = `${totalDeposit}€`;
+  labelSumOut.textContent = `${Math.abs(totalWithdrew)}€`;
+  labelSumInterest.textContent = `${totalInterest}€`;
+};
+
+// Display Movements
+const displayMovements = function ({ movements }) {
+  containerMovements.innerHTML = '';
+  movements.forEach((movement, index) => {
+    let type = movement > 0 ? 'deposit' : 'withdrawal';
+    let str = `<div class="movements__row">
+  <div class="movements__type movements__type--${type}">${
+      index + 1
+    } ${type}</div>
+  <div class="movements__value">${movement}€</div>
+</div>`;
+    containerMovements.insertAdjacentHTML('afterbegin', str);
+  });
+};
+
+// Updating UI
+const updateUI = function (currentAccount) {
+  displayBalance(currentAccount);
+  displaySummary(currentAccount);
+  displayMovements(currentAccount);
+};
+
+// Callback Functions
 // Login
 let currentAccount;
 btnLogin.addEventListener('click', e => {
@@ -89,6 +142,7 @@ btnLogin.addEventListener('click', e => {
       .split(' ')
       .slice(0, 1)}`;
     containerApp.style.opacity = 1;
+    updateUI(currentAccount);
   } else {
     labelWelcome.textContent = 'Wrong Credentials, Try Again';
   }
