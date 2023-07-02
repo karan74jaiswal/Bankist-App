@@ -104,9 +104,10 @@ const displaySummary = function ({ movements, interestRate }) {
 };
 
 // Display Movements
-const displayMovements = function ({ movements }) {
+const displayMovements = function ({ movements }, sort = false) {
   containerMovements.innerHTML = '';
-  movements.forEach((movement, index) => {
+  let movs = sort ? movements.slice().sort((a, b) => a - b) : movements;
+  movs.forEach((movement, index) => {
     let type = movement > 0 ? 'deposit' : 'withdrawal';
     let str = `<div class="movements__row">
   <div class="movements__type movements__type--${type}">${
@@ -208,4 +209,12 @@ btnClose.addEventListener('click', e => {
     containerApp.style.opacity = 0;
     labelWelcome.textContent = 'Log in to get started';
   }
+});
+
+// Sorting Feature
+let sort = false;
+btnSort.addEventListener('click', e => {
+  e.preventDefault();
+  displayMovements(currentAccount, !sort);
+  sort = !sort;
 });
