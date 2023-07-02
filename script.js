@@ -62,3 +62,34 @@ const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
 /////////////////////////////////////////////////
+// Creating Usernames
+accounts.forEach(
+  account =>
+    (account.username = account.owner
+      .toLowerCase()
+      .split(' ')
+      .map(el => el[0])
+      .join(''))
+);
+
+// Login
+let currentAccount;
+btnLogin.addEventListener('click', e => {
+  e.preventDefault();
+  const usernameInput = inputLoginUsername.value;
+  const pinInput = Number(inputLoginPin.value);
+  inputLoginUsername.value = inputLoginPin.value = '';
+  inputLoginPin.blur();
+  currentAccount = accounts.find(
+    ({ username, pin }) => usernameInput === username && pinInput === pin
+  );
+
+  if (currentAccount) {
+    labelWelcome.textContent = `Welcome Back, ${currentAccount.owner
+      .split(' ')
+      .slice(0, 1)}`;
+    containerApp.style.opacity = 1;
+  } else {
+    labelWelcome.textContent = 'Wrong Credentials, Try Again';
+  }
+});
