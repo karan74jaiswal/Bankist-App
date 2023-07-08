@@ -131,8 +131,30 @@ const currencyFormat = (value, locale, currency) =>
 const numberOfDaysPassed = date =>
   Math.trunc((new Date() - new Date(date)) / (1000 * 60 * 60 * 24));
 
+// Logout Timer Functionality
+const logoutTimer = function () {
+  let timer = 300;
+  const timerfunc = () => {
+    let minutes = Math.trunc(timer / 60);
+    let seconds = timer % 60;
+
+    labelTimer.textContent = `${minutes.toString().padStart(2, '0')}:${seconds
+      .toString()
+      .padStart(2, '0')}`;
+    if (timer === 0) {
+      containerApp.style.opacity = 0;
+      labelWelcome.textContent = 'Log in to get started';
+      clearInterval(timerInterval);
+    }
+    timer--;
+  };
+  timerfunc();
+  const timerInterval = setInterval(timerfunc, 1000);
+  return timerInterval;
+};
+
 // Calculate and Display Balance
-let currentAccountBalance;
+let currentAccountBalance, timerInterval;
 const displayBalance = function ({ movements, locale, currency }) {
   currentAccountBalance = movements.reduce(
     (balance, movement) => balance + movement,
@@ -252,11 +274,13 @@ btnLogin.addEventListener('click', e => {
   );
 
   if (currentAccount) {
+    if (timerInterval) clearInterval(timerInterval);
     labelWelcome.textContent = `Welcome Back, ${currentAccount.owner
       .split(' ')
       .slice(0, 1)}`;
     containerApp.style.opacity = 1;
     updateUI(currentAccount);
+    timerInterval = logoutTimer();
   } else {
     labelWelcome.textContent = 'Wrong Credentials, Try Again';
   }
@@ -282,6 +306,7 @@ btnTransfer.addEventListener('click', e => {
     transferAccount.movements.push(transferAmount);
     transferAccount.movementsDates.push(new Date().toISOString());
     updateUI(currentAccount);
+    clearInterval(timerInterval);
   }
 });
 
@@ -294,11 +319,13 @@ btnLoan.addEventListener('click', e => {
   if (
     loanAmount > 0 &&
     currentAccount.movements.some(movement => movement > 0.1 * loanAmount)
-  ) {
-    currentAccount.movements.push(loanAmount);
-    currentAccount.movementsDates.push(new Date().toISOString());
-    updateUI(currentAccount);
-  }
+  )
+    setTimeout(() => {
+      currentAccount.movements.push(loanAmount);
+      currentAccount.movementsDates.push(new Date().toISOString());
+      updateUI(currentAccount);
+      clearInterval(timerInterval);
+    }, 5000);
 });
 
 // Account Closure Feature
